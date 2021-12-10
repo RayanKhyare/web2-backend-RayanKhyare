@@ -23,27 +23,59 @@ const dbName = "courseProject";
 
 const port = process.env.PORT
 
+const uri = `mongodb+srv://admin:admin@cluster0.t4a9d.mongodb.net/${dbName}?retryWrites=true&w=majority`;
+const client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+
+
 app.use(express.static('public'))
 app.use(bodyParser.json())
 app.use(cors())
 
-app.get("", async (req, res) => {
+app.get('/', (req, res) => {
+    res.status(300).redirect('/info.html')
+})
 
-    return res.send("Received a GET HTTP method");;
-});
+app.get('/users', async (req, res) => {
+    try {
+        await client.connect()
+        const colli = client.db(dbName).collection('users')
+        const clngs = await colli.find({}).toArray()
 
-app.post("/", (req, res) => {
-    return res.send("Received a POST HTTP method");
-});
+        res.status(200).json(clngs)
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'something went wrong',
+            value: error
+        })
+    } finally {
+        await client.close()
+    }
+})
 
-app.put("/", (req, res) => {
-    return res.send("Received a PUT HTTP method");
-});
+app.post('/', async (req, res) => {
 
-app.delete("/", (req, res) => {
-    return res.send("Received a DELETE HTTP method");
-});
+})
 
-app.listen(process.env.PORT, () =>
-    console.log(`Example app listening on port ${process.env.PORT}!`)
-);
+app.put('/', async (req, res) => {
+
+})
+
+
+
+app.delete('/', async (req, res) => {
+
+})
+
+
+
+app.delete('/', async (req, res) => {
+
+})
+
+app.listen(port, () => {
+    console.log(`REST API is running at http://localhost:${port}`);
+})
