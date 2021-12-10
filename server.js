@@ -36,7 +36,7 @@ app.use(bodyParser.json())
 app.use(cors())
 
 app.get('/', (req, res) => {
-    res.status(300).redirect('/public/info.html')
+    res.status(300).redirect('/info.html')
 })
 
 app.get('/users', async (req, res) => {
