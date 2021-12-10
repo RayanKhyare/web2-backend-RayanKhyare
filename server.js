@@ -11,6 +11,7 @@ const app = express();
 const bodyParser = require('body-parser');
 
 const bcrypt = require('bcryptjs');
+const morgan = require('morgan')
 
 const cors = require('cors');
 const {
@@ -34,6 +35,7 @@ const client = new MongoClient(url, {
 app.use(express.static('public'))
 app.use(bodyParser.json())
 app.use(cors())
+app.use(morgan('common'))
 
 app.get('/', (req, res) => {
     res.status(300).redirect('/info.html')
