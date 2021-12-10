@@ -3,6 +3,8 @@ const {
     ObjectId
 } = require('mongodb');
 
+
+
 const express = require('express');
 const app = express();
 
@@ -17,14 +19,13 @@ const {
 
 require('dotenv').config()
 
-const client = new MongoClient(process.env.URL);
-
 const dbName = "courseProject";
 
-const port = process.env.PORT
+const port = process.env.PORT || 3000;
 
-const uri = `mongodb+srv://admin:admin@cluster0.t4a9d.mongodb.net/${dbName}?retryWrites=true&w=majority`;
-const client = new MongoClient(uri, {
+const url = "mongodb+srv://admin:admin@cluster0.t4a9d.mongodb.net/$courseProject?retryWrites=true&w=majority";
+
+const client = new MongoClient(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -35,7 +36,7 @@ app.use(bodyParser.json())
 app.use(cors())
 
 app.get('/', (req, res) => {
-    res.status(300).redirect('/info.html')
+    res.status(300).redirect('/public/info.html')
 })
 
 app.get('/users', async (req, res) => {
