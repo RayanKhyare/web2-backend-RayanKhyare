@@ -3,10 +3,12 @@ const {
     ObjectId
 } = require('mongodb');
 
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+
+const bcrypt = require('bcryptjs');
 
 const cors = require('cors');
 const {
