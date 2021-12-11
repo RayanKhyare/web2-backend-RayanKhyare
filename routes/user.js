@@ -5,6 +5,8 @@ const {
     ObjectId
 } = require('mongodb');
 
+const bcrypt = require('bcryptjs');
+
 const dbName = "courseProject";
 const User = require('../classes/User')
 
@@ -42,14 +44,12 @@ app.post('/', async (req, res, next) => {
         console.log("Connected correctly to server");
 
         await client.connect();
-        console.log(req.body.firstname);
-        let user = new User(req.body.firstname, req.body.lastname, req.body.email, req.body.password)
-        // let userDoc = {
-        //     firstname: req.body.firstname,
-        //     lastname: req.body.lastname,
-        //     email: req.body.email,
-        //     password: req.body.password
-        // }
+        console.log(req.body.password);
+
+
+        let user = await new User(req.body.firstname, req.body.lastname, req.body.email)
+        await user.hashPassword(req.body.password);
+
         res.status(200).send('succesfully uploaded')
 
         const p = await col.insertOne(user);
