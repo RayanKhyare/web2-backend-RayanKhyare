@@ -26,7 +26,7 @@ app.get('/', async (req, res) => {
 
         res.status(200).json(clngs)
     } catch (error) {
-        console.log(error)
+
         res.status(500).send({
             error: 'something went wrong',
             value: error.stack
@@ -37,14 +37,18 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/', async (req, res, next) => {
+
     try {
+
+        //Check if there is someting in the object posted
+        if (!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password) return res.status(400).send('Information not found')
 
         const db = client.db(dbName);
         const col = db.collection("users");
-        console.log("Connected correctly to server");
+
 
         await client.connect();
-        console.log(req.body.password);
+
 
 
         let user = await new User(req.body.firstname, req.body.lastname, req.body.email)
@@ -55,7 +59,7 @@ app.post('/', async (req, res, next) => {
         const p = await col.insertOne(user);
 
     } catch (err) {
-        console.log(err.stack);
+
     } finally {
         await client.close();
     }
@@ -75,7 +79,7 @@ app.get('/:id', async (req, res) => {
 
         res.status(200).json(clngs)
     } catch (error) {
-        console.log(error)
+
         res.status(500).send({
             error: 'something went wrong',
             value: error.stack
@@ -89,10 +93,10 @@ app.post("/login", async (req, res) => {
     try {
         const db = client.db(dbName);
         const col = db.collection("users");
-        console.log("Connected correctly to server");
+
 
         await client.connect();
-        console.log(req.body.password);
+
 
         const query = {
             email: req.body.email
@@ -106,14 +110,13 @@ app.post("/login", async (req, res) => {
         let passwordCheck = await user.unHashPassword(req.body.password)
         if (passwordCheck == false) return res.status(400).send("False password")
 
-        
-        console.log(passwordCheck);
-        console.log(myDoc);
+
+
         res.status(200).send(myDoc)
 
 
     } catch (err) {
-        console.log(err.stack);
+
     } finally {
         await client.close();
     }
@@ -132,7 +135,7 @@ app.delete('/:id', async (req, res) => {
         const userDelete = await col.deleteOne(query)
         res.status(200).send(userDelete);
     } catch (error) {
-        console.log(error);
+
         res.status(500).send({
             error: 'error',
             value: error.stack
