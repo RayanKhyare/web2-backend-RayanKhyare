@@ -4,7 +4,7 @@ const {
 } = require('mongodb');
 
 
-
+const User = require('User')
 const express = require('express');
 const app = express();
 
@@ -59,8 +59,52 @@ app.get('/users', async (req, res) => {
     }
 })
 
-app.post('/', async (req, res) => {
+app.post('/users', async (req, res) => {
+    try {
 
+        const db = client.db(dbName);
+        const col = db.collection("users");
+        console.log("Connected correctly to server");
+
+        await client.connect();
+
+        let user = new User(req.body.firstname, req.body.lastname, req.body.email, req.body.password)
+
+        res.status(200).send('succesfully uploaded')
+
+        const p = await col.insertOne(user);
+
+        const myDoc = await col.findOne();
+
+        console.log(myDoc);
+    } catch (err) {
+        console.log(err.stack);
+    } finally {
+        await client.close();
+    }
+})
+
+app.get('/users/:id', async (req, res) => {
+    try {
+        await client.connect()
+        const colli = client.db(dbName).collection('challenges')
+
+        const query = {
+            _id: req.params.id
+        }
+
+        const clngs = await colli.findOne(query)
+
+        res.status(200).json(clngs)
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'something went wrong',
+            value: error
+        })
+    } finally {
+        await client.close()
+    }
 })
 
 app.put('/', async (req, res) => {
