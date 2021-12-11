@@ -3,7 +3,7 @@ const {
     ObjectId
 } = require('mongodb');
 
-
+const userRoute = require('./routes/user.js');
 const User = require('./User.js')
 const express = require('express');
 const app = express();
@@ -36,98 +36,13 @@ app.use(express.static('public'))
 app.use(bodyParser.json())
 app.use(cors())
 app.use(morgan('common'))
+app.use('/users', userRoute)
 
 app.get('/', (req, res) => {
     res.status(300).redirect('/info.html')
 })
 
-app.get('/users', async (req, res) => {
-    try {
-        await client.connect()
-        const colli = client.db(dbName).collection('users')
-        const clngs = await colli.find({}).toArray()
 
-        res.status(200).json(clngs)
-    } catch (error) {
-        console.log(error)
-        res.status(500).send({
-            error: 'something went wrong',
-            value: error
-        })
-    } finally {
-        await client.close()
-    }
-})
-
-app.post('/users', async (req, res) => {
-    try {
-
-        const db = client.db(dbName);
-        const col = db.collection("users");
-        console.log("Connected correctly to server");
-
-        await client.connect();
-
-        let user = new User(req.body.firstname, req.body.lastname, req.body.email, req.body.password)
-
-        res.status(200).send('succesfully uploaded')
-
-        const p = await col.insertOne(user);
-
-        const myDoc = await col.findOne();
-
-        console.log(myDoc);
-    } catch (err) {
-        console.log(err.stack);
-    } finally {
-        await client.close();
-    }
-})
-
-app.get('/users/:id', async (req, res) => {
-    try {
-        await client.connect()
-        const db = client.db(dbName);
-        const col = db.collection("users");
-
-        const query = {
-            _id: ObjectId(req.params.id)
-        }
-
-        const clngs = await col.findOne(query)
-
-        res.status(200).json(clngs)
-    } catch (error) {
-        console.log(error)
-        res.status(500).send({
-            error: 'something went wrong',
-            value: error
-        })
-    } finally {
-        await client.close()
-    }
-})
-
-
-app.delete('/users/:id', async (req, res) => {
-    try {
-        await client.connect();
-        const db = client.db(dbName);
-        const col = db.collection("users");
-
-        const query = {
-            _id: ObjectId(req.params.id)
-        }
-        const userDelete = await col.deleteOne(query)
-        res.status(200).send(userDelete);
-    } catch (error) {
-        console.log(error);
-        res.status(500).send({
-            error: 'error',
-            value: error
-        });
-    }
-})
 
 
 
