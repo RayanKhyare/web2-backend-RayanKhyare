@@ -91,7 +91,7 @@ app.get('/users/:id', async (req, res) => {
         const col = db.collection("users");
 
         const query = {
-            _id: req.params.id
+            _id: ObjectId(req.params.id)
         }
 
         const clngs = await col.findOne(query)
