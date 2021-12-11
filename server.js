@@ -108,14 +108,25 @@ app.get('/users/:id', async (req, res) => {
     }
 })
 
-app.put('/', async (req, res) => {
 
-})
+app.delete('/users/:id', async (req, res) => {
+    try {
+        await client.connect();
+        const db = client.db(dbName);
+        const col = db.collection("users");
 
-
-
-app.delete('/', async (req, res) => {
-
+        const query = {
+            _id: ObjectId(req.params.id)
+        }
+        const userDelete = await col.deleteOne(query)
+        res.status(200).send(userDelete);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            error: 'error',
+            value: error
+        });
+    }
 })
 
 
