@@ -54,9 +54,6 @@ app.post('/', async (req, res, next) => {
 
         const p = await col.insertOne(user);
 
-        const myDoc = await col.findOne();
-
-        console.log(myDoc);
     } catch (err) {
         console.log(err.stack);
     } finally {
@@ -85,6 +82,40 @@ app.get('/:id', async (req, res) => {
         })
     } finally {
         await client.close()
+    }
+})
+
+app.post("/login", async (req, res) => {
+    try {
+        const db = client.db(dbName);
+        const col = db.collection("users");
+        console.log("Connected correctly to server");
+
+        await client.connect();
+        console.log(req.body.password);
+
+        const query = {
+            email: req.body.email
+        }
+
+        const myDoc = await col.findOne(query)
+        if (myDoc == null) return res.status(404).send("Nothing found") //guard clause
+
+        const user = new User(myDoc.firstname, myDoc.lastname, myDoc.email, myDoc.password)
+
+        let passwordCheck = await user.unHashPassword(req.body.password)
+        if (passwordCheck == false) return res.status(400).send("False password")
+
+        
+        console.log(passwordCheck);
+        console.log(myDoc);
+        res.status(200).send(myDoc)
+
+
+    } catch (err) {
+        console.log(err.stack);
+    } finally {
+        await client.close();
     }
 })
 
