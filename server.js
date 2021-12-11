@@ -4,7 +4,7 @@ const {
 } = require('mongodb');
 
 
-const User = require('User')
+const User = require('./User.js')
 const express = require('express');
 const app = express();
 
@@ -87,13 +87,14 @@ app.post('/users', async (req, res) => {
 app.get('/users/:id', async (req, res) => {
     try {
         await client.connect()
-        const colli = client.db(dbName).collection('challenges')
+        const db = client.db(dbName);
+        const col = db.collection("users");
 
         const query = {
             _id: req.params.id
         }
 
-        const clngs = await colli.findOne(query)
+        const clngs = await col.findOne(query)
 
         res.status(200).json(clngs)
     } catch (error) {
