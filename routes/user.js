@@ -1,12 +1,12 @@
-const express = require('express').Router;
-const app = express();
+const express = require('express');
+const app = express.Router();
 const {
     MongoClient,
     ObjectId
 } = require('mongodb');
 
 const dbName = "courseProject";
-const User = require('./User.js')
+const User = require('../classes/User')
 
 const url = "mongodb+srv://admin:admin@cluster0.t4a9d.mongodb.net/$courseProject?retryWrites=true&w=majority";
 
@@ -27,14 +27,14 @@ app.get('/', async (req, res) => {
         console.log(error)
         res.status(500).send({
             error: 'something went wrong',
-            value: error
+            value: error.stack
         })
     } finally {
         await client.close()
     }
 })
 
-app.post('/', async (req, res) => {
+app.post('/', async (req, res, next) => {
     try {
 
         const db = client.db(dbName);
@@ -42,9 +42,14 @@ app.post('/', async (req, res) => {
         console.log("Connected correctly to server");
 
         await client.connect();
-
+        console.log(req.body.firstname);
         let user = new User(req.body.firstname, req.body.lastname, req.body.email, req.body.password)
-
+        // let userDoc = {
+        //     firstname: req.body.firstname,
+        //     lastname: req.body.lastname,
+        //     email: req.body.email,
+        //     password: req.body.password
+        // }
         res.status(200).send('succesfully uploaded')
 
         const p = await col.insertOne(user);
@@ -76,7 +81,7 @@ app.get('/:id', async (req, res) => {
         console.log(error)
         res.status(500).send({
             error: 'something went wrong',
-            value: error
+            value: error.stack
         })
     } finally {
         await client.close()
@@ -99,7 +104,7 @@ app.delete('/:id', async (req, res) => {
         console.log(error);
         res.status(500).send({
             error: 'error',
-            value: error
+            value: error.stack
         });
     }
 })

@@ -4,7 +4,7 @@ const {
 } = require('mongodb');
 
 const userRoute = require('./routes/user.js');
-const User = require('./User.js')
+const User = require('./classes/User.js')
 const express = require('express');
 const app = express();
 
@@ -41,10 +41,6 @@ app.use('/users', userRoute)
 app.get('/', (req, res) => {
     res.status(300).redirect('/info.html')
 })
-
-
-
-
 
 app.delete('/', async (req, res) => {
 
