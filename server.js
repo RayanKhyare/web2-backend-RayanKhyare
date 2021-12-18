@@ -4,7 +4,11 @@ const {
 } = require('mongodb');
 
 const userRoute = require('./routes/user.js');
-const User = require('./classes/User.js')
+const User = require('./classes/User.js');
+
+const gameRoute = require('./routes/game.js');
+const Game = require('./classes/Game.js');
+
 const express = require('express');
 const app = express();
 
@@ -37,6 +41,7 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use(morgan('common'))
 app.use('/users', userRoute)
+app.use('/games', gameRoute)
 
 app.get('/', (req, res) => {
     res.status(300).redirect('/info.html')
