@@ -134,4 +134,48 @@ app.delete('/:id', async (req, res) => {
     }
 })
 
+app.put('/:id', async (req, res) => {
+    if (!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password) return res.status(400).send('Information not found')
+
+    try {
+        await client.connect();
+        const db = client.db(dbName);
+        const col = db.collection("users");
+
+        const query = {
+            _id: ObjectId(req.params.id)
+        };
+
+        let update = {
+            $set: {
+                email: req.body.email,
+                password: req.body.password
+            }
+        };
+
+        const updateChallenge = await col.updateOne(query, update)
+
+        if (updateChallenge) {
+            res.status(201).send({
+                succes: `Challenge ${req.body._id} is successfully updated.`,
+            });
+            return;
+        } else {
+            res.status(400).send({
+                error: `Challenge "${req.body._id}" isn't found.`,
+                value: error,
+            });
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            error: 'Something went wrong',
+            value: error
+        });
+    } finally {
+        await client.close();
+    }
+});
+
 module.exports = app;
