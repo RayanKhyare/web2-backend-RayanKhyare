@@ -86,10 +86,11 @@ app.get('/bookmarks/:id', async (req, res) => {
         const col = db.collection("games");
 
         const query = {
-            _id: ObjectId(req.params.userId)
+            userId: req.params.id
         }
+        console.log(query)
 
-        const clngs = await col.findOne(query)
+        const clngs = await col.find(query).toArray()
 
         res.status(200).json(clngs)
     } catch (error) {
