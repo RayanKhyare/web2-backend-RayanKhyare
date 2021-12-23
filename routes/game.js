@@ -79,6 +79,29 @@ app.get('/:id', async (req, res) => {
     }
 })
 
+app.get('/bookmarks/:id', async (req, res) => {
+    try {
+        await client.connect()
+        const db = client.db(dbName);
+        const col = db.collection("games");
+
+        const query = {
+            _id: ObjectId(req.params.userId)
+        }
+
+        const clngs = await col.findOne(query)
+
+        res.status(200).json(clngs)
+    } catch (error) {
+        res.status(500).send({
+            error: 'something went wrong',
+            value: error.stack
+        })
+    } finally {
+        await client.close()
+    }
+})
+
 
 app.delete('/:id', async (req, res) => {
     try {
@@ -99,5 +122,6 @@ app.delete('/:id', async (req, res) => {
         });
     }
 })
+
 
 module.exports = app;

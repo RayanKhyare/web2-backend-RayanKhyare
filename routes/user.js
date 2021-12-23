@@ -103,8 +103,8 @@ app.post("/login", async (req, res) => {
         let passwordCheck = await user.unHashPassword(req.body.password)
         if (passwordCheck == false) return res.status(400).send("False password")
 
-        res.status(200).send(myDoc)
 
+        res.status(200).send(myDoc)
 
     } catch (err) {
 
