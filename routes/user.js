@@ -148,10 +148,15 @@ app.put('/:id', async (req, res) => {
 
         let update = {
             $set: {
+                firstname: req.body.firstname,
+                lastname: req.body.lastname,
                 email: req.body.email,
                 password: req.body.password
             }
         };
+
+        let user = await new User(req.body.firstname, req.body.lastname, req.body.email)
+        await user.hashPassword(req.body.password);
 
         const updateChallenge = await col.updateOne(query, update)
 
