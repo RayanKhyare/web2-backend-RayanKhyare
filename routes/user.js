@@ -148,21 +148,23 @@ app.put('/:id', async (req, res) => {
             _id: ObjectId(req.params.id)
         };
 
-        // let update = {
-        //     $set: {
-        //         firstname: req.body.firstname,
-        //         lastname: req.body.lastname,
-        //         email: req.body.email,
-        //         password: req.body.password
-        //     }
-        // };
+        let update = {
+            $set: {
+                firstname: req.body.firstname,
+                lastname: req.body.lastname,
+                email: req.body.email,
+                password: req.body.password
+            }
+        };
 
         let user = await new User(req.body.firstname, req.body.lastname, req.body.email)
         await user.hashPassword(req.body.password);
 
         const updateChallenge = await col.updateOne(query, {
-            email: user.email,
-            password: user.password
+            $set: {
+                email: user.email,
+                password: user.password
+            }
         })
 
         if (updateChallenge) {
@@ -173,7 +175,7 @@ app.put('/:id', async (req, res) => {
         } else {
             res.status(400).send({
                 error: `Challenge "${req.body._id}" isn't found.`,
-                value: error,
+                value: error.stack,
             });
         }
 
@@ -181,7 +183,7 @@ app.put('/:id', async (req, res) => {
         console.log(error);
         res.status(500).send({
             error: 'Something went wrong',
-            value: error
+            value: error.stack
         });
     } finally {
         await client.close();
