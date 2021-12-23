@@ -146,19 +146,19 @@ app.put('/:id', async (req, res) => {
             _id: ObjectId(req.params.id)
         };
 
-        let update = {
-            $set: {
-                firstname: req.body.firstname,
-                lastname: req.body.lastname,
-                email: req.body.email,
-                password: req.body.password
-            }
-        };
+        // let update = {
+        //     $set: {
+        //         firstname: req.body.firstname,
+        //         lastname: req.body.lastname,
+        //         email: req.body.email,
+        //         password: req.body.password
+        //     }
+        // };
 
         let user = await new User(req.body.firstname, req.body.lastname, req.body.email)
         await user.hashPassword(req.body.password);
 
-        const updateChallenge = await col.updateOne(query, update)
+        const updateChallenge = await col.updateOne(query, user)
 
         if (updateChallenge) {
             res.status(201).send({
