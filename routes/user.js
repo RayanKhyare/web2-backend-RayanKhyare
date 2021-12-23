@@ -148,7 +148,8 @@ app.put('/:id', async (req, res) => {
 
         let update = {
             $set: {
-                email: req.body.email
+                email: req.body.email,
+                password: req.body.password
             }
         };
 
