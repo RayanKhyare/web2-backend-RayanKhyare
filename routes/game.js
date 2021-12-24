@@ -15,13 +15,15 @@ const client = new MongoClient(url, {
     useUnifiedTopology: true
 });
 
+// Get all games
 app.get('/', async (req, res) => {
     try {
         await client.connect()
+        //Takes the database and collection
         const colli = client.db(dbName).collection('games')
-        const clngs = await colli.find({}).toArray()
+        const games = await colli.find({}).toArray()
 
-        res.status(200).json(clngs)
+        res.status(200).json(games)
     } catch (error) {
 
         res.status(500).send({
@@ -32,17 +34,19 @@ app.get('/', async (req, res) => {
         await client.close()
     }
 })
-
+// Post a game to database
 app.post('/', async (req, res, next) => {
     try {
         //Check if there is someting in the object posted
         if (!req.body.userId || !req.body.gameId || !req.body.gameImg || !req.body.gameRelease) return res.status(400).send('Information not found')
 
+        //Takes the database
         const db = client.db(dbName);
+        //Takes the right collection
         const col = db.collection("games");
 
         await client.connect();
-
+        //Make body to post
         let game = await new Game(req.body.userId, req.body.gameId, req.body.gameImg, req.body.gameName, req.body.gameRelease)
 
         res.status(200).send('succesfully uploaded')
@@ -56,12 +60,16 @@ app.post('/', async (req, res, next) => {
     }
 })
 
+// Get a specific game
 app.get('/:id', async (req, res) => {
     try {
         await client.connect()
-        const db = client.db(dbName);
-        const col = db.collection("games");
 
+        //Takes the database
+        const db = client.db(dbName);
+        //Takes the right collection
+        const col = db.collection("games");
+        //Takes the id
         const query = {
             _id: ObjectId(req.params.id)
         }
@@ -79,12 +87,16 @@ app.get('/:id', async (req, res) => {
     }
 })
 
+// Get all the games saved by a specific user
 app.get('/bookmarks/:id', async (req, res) => {
     try {
         await client.connect()
-        const db = client.db(dbName);
-        const col = db.collection("games");
 
+        //Takes the database
+        const db = client.db(dbName);
+        //Takes the right collection
+        const col = db.collection("games");
+        //Takes the id
         const query = {
             userId: req.params.id
         }
@@ -103,13 +115,16 @@ app.get('/bookmarks/:id', async (req, res) => {
     }
 })
 
-
+// Delete a game from the database
 app.delete('/:id', async (req, res) => {
     try {
         await client.connect();
-        const db = client.db(dbName);
-        const col = db.collection("games");
 
+        //Takes the database
+        const db = client.db(dbName);
+        //Takes the right collection
+        const col = db.collection("games");
+        //Takes the id
         const query = {
             _id: ObjectId(req.params.id)
         }

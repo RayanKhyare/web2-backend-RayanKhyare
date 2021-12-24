@@ -1,3 +1,4 @@
+// Made a class Game
 class Game {
 
     constructor(userId, gameId, gameImg, gameName, gameRelease) {

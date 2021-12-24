@@ -5,8 +5,6 @@ const {
     ObjectId
 } = require('mongodb');
 
-const bcrypt = require('bcryptjs');
-
 const dbName = "courseProject";
 const User = require('../classes/User')
 
@@ -18,13 +16,20 @@ const client = new MongoClient(url, {
 });
 
 
+// Get all the users
 app.get('/', async (req, res) => {
     try {
-        await client.connect()
-        const colli = client.db(dbName).collection('users')
-        const clngs = await colli.find({}).toArray()
 
-        res.status(200).json(clngs)
+        // Create a new MongoClient instance
+        await client.connect()
+
+        //Takes the database
+        const db = client.db(dbName);
+        //Takes the right collection
+        const col = db.collection("users");
+        const users = await col.find({}).toArray()
+
+        res.status(200).json(users)
     } catch (error) {
 
         res.status(500).send({
@@ -36,14 +41,17 @@ app.get('/', async (req, res) => {
     }
 })
 
+// Post a user
 app.post('/', async (req, res, next) => {
     try {
         //Check if there is someting in the object posted
         if (!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password) return res.status(400).send('Information not found')
 
+        //Takes the database
         const db = client.db(dbName);
+        //Takes the right collection
         const col = db.collection("users");
-
+        // Create a new MongoClient instance
         await client.connect();
 
         let user = await new User(req.body.firstname, req.body.lastname, req.body.email)
@@ -60,12 +68,18 @@ app.post('/', async (req, res, next) => {
     }
 })
 
+// Get a user with a specific ID
 app.get('/:id', async (req, res) => {
     try {
+        // Create a new MongoClient instance
         await client.connect()
+
+        //Takes the database
         const db = client.db(dbName);
+        //Takes the right collection
         const col = db.collection("users");
 
+        //Selects the id
         const query = {
             _id: ObjectId(req.params.id)
         }
@@ -84,13 +98,18 @@ app.get('/:id', async (req, res) => {
     }
 })
 
+// Verify the login if the data is in the database
 app.post("/login", async (req, res) => {
     try {
-        const db = client.db(dbName);
-        const col = db.collection("users");
 
+        //Takes the database
+        const db = client.db(dbName);
+        //Takes the right collection
+        const col = db.collection("users");
+        // Create a new MongoClient instance
         await client.connect();
 
+        //Selects the email
         const query = {
             email: req.body.email
         }
@@ -100,6 +119,7 @@ app.post("/login", async (req, res) => {
 
         const user = new User(myDoc.firstname, myDoc.lastname, myDoc.email, myDoc.password)
 
+        //Unhash the password
         let passwordCheck = await user.unHashPassword(req.body.password)
         if (passwordCheck == false) return res.status(400).send("False password")
 
@@ -113,13 +133,18 @@ app.post("/login", async (req, res) => {
     }
 })
 
-
+// Delete a user with a specific id
 app.delete('/:id', async (req, res) => {
     try {
+        // Create a new MongoClient instance
         await client.connect();
+
+        //Takes the database
         const db = client.db(dbName);
+        //Takes the right collection
         const col = db.collection("users");
 
+        //Selects the id
         const query = {
             _id: ObjectId(req.params.id)
         }
@@ -134,27 +159,22 @@ app.delete('/:id', async (req, res) => {
     }
 })
 
+// Update a user email or password
 app.put('/:id', async (req, res) => {
     if (!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password) return res.status(400).send('Information not found')
 
     try {
 
+        //Takes the database
         const db = client.db(dbName);
+        //Takes the right collection
         const col = db.collection("users");
-
+        // Create a new MongoClient instance
         await client.connect();
 
+        //Selects the id
         const query = {
             _id: ObjectId(req.params.id)
-        };
-
-        let update = {
-            $set: {
-                firstname: req.body.firstname,
-                lastname: req.body.lastname,
-                email: req.body.email,
-                password: req.body.password
-            }
         };
 
         let user = await new User(req.body.firstname, req.body.lastname, req.body.email)
@@ -169,12 +189,12 @@ app.put('/:id', async (req, res) => {
 
         if (updateChallenge) {
             res.status(201).send({
-                succes: `Challenge ${req.body._id} is successfully updated.`,
+                succes: `Challengeis successfully updated.`,
             });
             return;
         } else {
             res.status(400).send({
-                error: `Challenge "${req.body._id}" isn't found.`,
+                error: `Challenge isn't found.`,
                 value: error.stack,
             });
         }
