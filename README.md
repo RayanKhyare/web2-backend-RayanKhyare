@@ -1,9 +1,6 @@
 
 # Course projet WEB2 Rayan Khyare 
 
-- Made this readme with : https://readme.so/
-
-
 ## Description
 
 For WEB2 we had to create a complete website that includes a frontend and backend that are linked to a database that we created for the occasion.
